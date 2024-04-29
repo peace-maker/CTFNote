@@ -70,7 +70,7 @@
     </div>
 
     <div class="col-md-6 col-xs-12">
-      <q-card>
+      <q-card class="q-mb-md">
         <q-card-section>
           <div class="text-h6">Calendar password</div>
         </q-card-section>
@@ -103,11 +103,8 @@
           </password-input>
         </q-card-section>
       </q-card>
-    </div>
-  </div>
-  <div class="row q-gutter-md">
-    <div class="col">
-      <q-card bordered>
+
+      <q-card>
         <q-card-section>
           <div class="text-h6">External Authentication</div>
         </q-card-section>
