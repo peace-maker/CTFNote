@@ -39,8 +39,8 @@ mutation Login($login: String!, $password: String!) {
   }
 }
 
-mutation LoginExternal {
-  loginExternal(input: {}) {
+mutation LoginExternal($login: String!) {
+  loginExternal(input: { login: $login }) {
     jwt
   }
 }
@@ -79,8 +79,8 @@ mutation RegisterWithPassword(
   }
 }
 
-mutation RegisterExternal {
-  registerExternal(input: {}) {
+mutation RegisterExternal($login: String!) {
+  registerExternal(input: { login: $login }) {
     jwt
   }
 }

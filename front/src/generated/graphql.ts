@@ -1009,6 +1009,7 @@ export type LoginExternalInput = {
    * payload verbatim. May be used to track mutations by the client.
    */
   clientMutationId?: InputMaybe<Scalars['String']>;
+  login: Scalars['String'];
 };
 
 /** The output of our `loginExternal` mutation. */
@@ -2052,6 +2053,7 @@ export type RegisterExternalInput = {
    * payload verbatim. May be used to track mutations by the client.
    */
   clientMutationId?: InputMaybe<Scalars['String']>;
+  login: Scalars['String'];
 };
 
 /** The output of our `registerExternal` mutation. */
@@ -3225,7 +3227,9 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'LoginPayload', jwt?: string | null } | null };
 
-export type LoginExternalMutationVariables = Exact<{ [key: string]: never; }>;
+export type LoginExternalMutationVariables = Exact<{
+  login: Scalars['String'];
+}>;
 
 
 export type LoginExternalMutation = { __typename?: 'Mutation', loginExternal?: { __typename?: 'LoginExternalPayload', jwt?: string | null } | null };
@@ -3256,7 +3260,9 @@ export type RegisterWithPasswordMutationVariables = Exact<{
 
 export type RegisterWithPasswordMutation = { __typename?: 'Mutation', registerWithPassword?: { __typename?: 'RegisterWithPasswordPayload', jwt?: string | null } | null };
 
-export type RegisterExternalMutationVariables = Exact<{ [key: string]: never; }>;
+export type RegisterExternalMutationVariables = Exact<{
+  login: Scalars['String'];
+}>;
 
 
 export type RegisterExternalMutation = { __typename?: 'Mutation', registerExternal?: { __typename?: 'RegisterExternalPayload', jwt?: string | null } | null };
@@ -4143,8 +4149,8 @@ export function useLoginMutation(options: VueApolloComposable.UseMutationOptions
 }
 export type LoginMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<LoginMutation, LoginMutationVariables>;
 export const LoginExternalDocument = gql`
-    mutation LoginExternal {
-  loginExternal(input: {}) {
+    mutation LoginExternal($login: String!) {
+  loginExternal(input: {login: $login}) {
     jwt
   }
 }
@@ -4161,7 +4167,11 @@ export const LoginExternalDocument = gql`
  * @param options that will be passed into the mutation, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/mutation.html#options;
  *
  * @example
- * const { mutate, loading, error, onDone } = useLoginExternalMutation();
+ * const { mutate, loading, error, onDone } = useLoginExternalMutation({
+ *   variables: {
+ *     login: // value for 'login'
+ *   },
+ * });
  */
 export function useLoginExternalMutation(options: VueApolloComposable.UseMutationOptions<LoginExternalMutation, LoginExternalMutationVariables> | ReactiveFunction<VueApolloComposable.UseMutationOptions<LoginExternalMutation, LoginExternalMutationVariables>> = {}) {
   return VueApolloComposable.useMutation<LoginExternalMutation, LoginExternalMutationVariables>(LoginExternalDocument, options);
@@ -4262,8 +4272,8 @@ export function useRegisterWithPasswordMutation(options: VueApolloComposable.Use
 }
 export type RegisterWithPasswordMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<RegisterWithPasswordMutation, RegisterWithPasswordMutationVariables>;
 export const RegisterExternalDocument = gql`
-    mutation RegisterExternal {
-  registerExternal(input: {}) {
+    mutation RegisterExternal($login: String!) {
+  registerExternal(input: {login: $login}) {
     jwt
   }
 }
@@ -4280,7 +4290,11 @@ export const RegisterExternalDocument = gql`
  * @param options that will be passed into the mutation, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/mutation.html#options;
  *
  * @example
- * const { mutate, loading, error, onDone } = useRegisterExternalMutation();
+ * const { mutate, loading, error, onDone } = useRegisterExternalMutation({
+ *   variables: {
+ *     login: // value for 'login'
+ *   },
+ * });
  */
 export function useRegisterExternalMutation(options: VueApolloComposable.UseMutationOptions<RegisterExternalMutation, RegisterExternalMutationVariables> | ReactiveFunction<VueApolloComposable.UseMutationOptions<RegisterExternalMutation, RegisterExternalMutationVariables>> = {}) {
   return VueApolloComposable.useMutation<RegisterExternalMutation, RegisterExternalMutationVariables>(RegisterExternalDocument, options);
@@ -6149,8 +6163,8 @@ export const Login = gql`
 }
     `;
 export const LoginExternal = gql`
-    mutation LoginExternal {
-  loginExternal(input: {}) {
+    mutation LoginExternal($login: String!) {
+  loginExternal(input: {login: $login}) {
     jwt
   }
 }
@@ -6179,8 +6193,8 @@ export const RegisterWithPassword = gql`
 }
     `;
 export const RegisterExternal = gql`
-    mutation RegisterExternal {
-  registerExternal(input: {}) {
+    mutation RegisterExternal($login: String!) {
+  registerExternal(input: {login: $login}) {
     jwt
   }
 }

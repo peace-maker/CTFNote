@@ -37,12 +37,11 @@ STRICT
 SECURITY DEFINER;
 
 
-CREATE FUNCTION ctfnote.register_external ()
+CREATE FUNCTION ctfnote.register_external ("login" text)
   RETURNS ctfnote.jwt
   AS $$
 DECLARE
   settings ctfnote.settings;
-  username text;
 BEGIN
   SELECT
     * INTO settings
@@ -53,27 +52,25 @@ BEGIN
     RAISE EXCEPTION 'External registration disabled';
   END IF;
 
-  SELECT current_setting('passport.username', TRUE)::text INTO username;
-  IF username IS NULL THEN
+  IF "register_external"."login" IS NULL THEN
     RAISE EXCEPTION 'External auth failed';
   END IF;
 
-  RETURN ctfnote_private.do_register (username, 'no_password', settings.registration_default_role, TRUE);
+  RETURN ctfnote_private.do_register ("register_external"."login", 'no_password', settings.registration_default_role, TRUE);
 END
 $$
 LANGUAGE plpgsql
 STRICT
 SECURITY DEFINER;
 
-GRANT EXECUTE ON FUNCTION ctfnote.register_external () TO user_anonymous;
+GRANT EXECUTE ON FUNCTION ctfnote.register_external ("login" text) TO user_anonymous;
 
 
-CREATE FUNCTION ctfnote.login_external()
+CREATE FUNCTION ctfnote.login_external("login" text)
   RETURNS ctfnote.jwt
   AS $$
 DECLARE
   settings ctfnote.settings;
-  username text;
   log_user ctfnote_private.user;
 BEGIN
   SELECT
@@ -85,8 +82,7 @@ BEGIN
     RAISE EXCEPTION 'External login disabled';
   END IF;
 
-  SELECT current_setting('passport.username', TRUE)::text INTO username;
-  IF username IS NULL THEN
+  IF "login_external"."login" IS NULL THEN
     RAISE EXCEPTION 'External auth failed';
   END IF;
 
@@ -95,7 +91,7 @@ BEGIN
   FROM
     ctfnote_private.user
   WHERE
-    "user"."login" = username;
+    "user"."login" = "login_external"."login";
   IF NOT log_user."external_auth" THEN
     RAISE EXCEPTION 'External auth not enabled for this user';
   END IF;
@@ -107,7 +103,7 @@ LANGUAGE plpgsql
 STRICT
 SECURITY DEFINER;
 
-GRANT EXECUTE ON FUNCTION ctfnote.login_external () TO user_anonymous;
+GRANT EXECUTE ON FUNCTION ctfnote.login_external ("login" text) TO user_anonymous;
 
 
 CREATE OR REPLACE FUNCTION ctfnote.login ("login" text, "password" text)

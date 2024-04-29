@@ -162,7 +162,7 @@ function createApp(postgraphileOptions: PostGraphileOptions) {
   );
   app.use(postgraphile(pool, "ctfnote", postgraphileOptions));
   app.use("/calendar.ics", icalRoute(pool));
-  installExternalAuth(app);
+  installExternalAuth(app, pool);
   return app;
 }
 
