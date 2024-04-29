@@ -13,6 +13,7 @@ fragment AdminSettingsInfo on Setting {
   registrationPassword
   registrationDefaultRole
   registrationExternalDefaultRole
+  icalPassword
 }
 
 query getSettings {
@@ -22,6 +23,16 @@ query getSettings {
     }
   }
 }
+
+query getIcalPassword {
+  settings {
+    nodes {
+      nodeId
+      icalPassword
+    }
+  }
+}
+
 query getAdminSettings {
   settings {
     nodes {

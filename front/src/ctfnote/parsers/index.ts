@@ -3,10 +3,12 @@ import ECSCParser from './ecsc';
 import RawParser from './raw';
 import HTBParser from './htb';
 import PicoParser from './pico';
+import justCTFParser from './justctf';
+import AngstromParser from './angstrom';
 
 export type ParsedTask = {
   title: string;
-  category: string;
+  tags: string[];
   description?: string;
   keep?: boolean;
 };
@@ -18,4 +20,12 @@ export type Parser = {
   parse(s: string): ParsedTask[];
 };
 
-export default [RawParser, CTFDParser, ECSCParser, HTBParser, PicoParser];
+export default [
+  RawParser,
+  CTFDParser,
+  ECSCParser,
+  HTBParser,
+  PicoParser,
+  justCTFParser,
+  AngstromParser,
+];

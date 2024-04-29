@@ -12,7 +12,6 @@ import { useRouter } from 'vue-router';
 import { prefetchMe } from './me';
 import { wrapQuery } from './utils';
 
-
 export const JWT_KEY = 'JWT';
 
 export function saveJWT(jwt: string | null | undefined) {
@@ -61,7 +60,7 @@ export function useLogin() {
     const jwt = r?.data?.login?.jwt;
     if (jwt) {
       saveJWT(jwt);
-      await prefetchMe()
+      await prefetchMe();
       await $router.push({ name: 'ctfs-incoming' });
     }
   };
@@ -75,7 +74,7 @@ export function useRegister() {
     const jwt = r?.data?.register?.jwt;
     if (jwt) {
       saveJWT(jwt);
-      await prefetchMe()
+      await prefetchMe();
       await $router.push({ name: 'ctfs-incoming' });
     }
   };
@@ -89,7 +88,7 @@ export function useRegisterWithToken() {
     const jwt = r?.data?.registerWithToken?.jwt;
     if (jwt) {
       saveJWT(jwt);
-      await prefetchMe()
+      await prefetchMe();
       await $router.push({ name: 'ctfs-incoming' });
     }
   };
@@ -107,7 +106,7 @@ export function useRegisterWithPassword() {
     const jwt = r?.data?.registerWithPassword?.jwt;
     if (jwt) {
       saveJWT(jwt);
-      await prefetchMe()
+      await prefetchMe();
       await $router.push({ name: 'ctfs-incoming' });
     }
   };
@@ -121,7 +120,7 @@ export function useResetPassword() {
     const jwt = r?.data?.resetPassword?.jwt;
     if (jwt) {
       saveJWT(jwt);
-      await prefetchMe()
+      await prefetchMe();
       await $router.push({ name: 'ctfs-incoming' });
     }
   };

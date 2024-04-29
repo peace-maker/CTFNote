@@ -17,13 +17,21 @@ const PicoParser: Parser = {
       if (!task.name || !task.category) {
         continue;
       }
-      tasks.push({ title: task.name, category: task.category.name });
+      tasks.push({ title: task.name, tags: [task.category.name] });
     }
     return tasks;
   },
   isValid(s) {
-    const data = parseJson<{ results?: unknown }>(s);
-    return Array.isArray(data?.results);
+    const data = parseJson<{
+      results: Array<{ name: string; category: { name: string } }>;
+    }>(s);
+    return (
+      data?.results != null &&
+      Array.isArray(data?.results) &&
+      data?.results.length > 0 &&
+      data?.results[0].name != null &&
+      data?.results[0].category.name != null
+    );
   },
 };
 

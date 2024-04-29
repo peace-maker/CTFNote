@@ -6,6 +6,7 @@ import {
   SettingPatch,
   SettingsInfoFragment,
   useGetAdminSettingsQuery,
+  useGetIcalPasswordQuery,
   useGetSettingsQuery,
   useUpdateSettingsMutation,
 } from 'src/generated/graphql';
@@ -53,6 +54,7 @@ export function buildAdminSettings(
     registrationDefaultRole: fragment.registrationDefaultRole ?? Role.UserGuest,
     registrationExternalDefaultRole: fragment.registrationExternalDefaultRole ?? Role.UserGuest,
     style: parseStyle(fragment.style ?? '{}'),
+    icalPassword: fragment.icalPassword ?? '',
   };
 }
 
@@ -96,6 +98,13 @@ export function getAdminSettings() {
   return wrapQuery(r, buildAdminSettings({}), (data) => {
     settingsNodeId = data.settings.nodes[0].nodeId;
     return buildAdminSettings(data.settings.nodes[0]);
+  });
+}
+
+export function getIcalPassword() {
+  const r = useGetIcalPasswordQuery();
+  return wrapQuery(r, 'no pass', (data) => {
+    return data.settings.nodes[0].icalPassword;
   });
 }
 
