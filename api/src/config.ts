@@ -32,6 +32,14 @@ export type CTFNoteConfig = DeepReadOnly<{
     useSSL: string;
   };
 
+  externalAuth: {
+    oauth2: {
+      authorizationURL: string;
+      tokenURL: string;
+      clientID: string;
+      clientSecret: string;
+    }
+  },
   web: {
     port: number;
   };
@@ -82,6 +90,14 @@ const config: CTFNoteConfig = {
     documentMaxLength: Number(getEnv("CMD_DOCUMENT_MAX_LENGTH", "100000")),
     domain: getEnv("CMD_DOMAIN", ""),
     useSSL: getEnv("CMD_PROTOCOL_USESSL", "false"),
+  },
+  externalAuth: {
+    oauth2: {
+      authorizationURL: getEnv("OAUTH2_AUTHORIZATION_URL", ""),
+      tokenURL: getEnv("OAUTH2_TOKEN_URL", ""),
+      clientID: getEnv("OAUTH2_CLIENT_ID", ""),
+      clientSecret: getEnv("OAUTH2_CLIENT_SECRET", ""),
+    }
   },
   web: {
     port: getEnvInt("WEB_PORT"),

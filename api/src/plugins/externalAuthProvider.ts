@@ -2,36 +2,41 @@ import { makeExtendSchemaPlugin, gql } from "graphile-utils";
 import passport from "passport";
 import OAuth2Strategy, {
   VerifyCallback as OAuth2VerifyCallback,
+  StrategyOptions as OAuth2StrategyOptions,
 } from "passport-oauth2";
 import express from "express";
+import config from "../config";
 
 const authUrlBase = "/auth/";
 
 type Provider = {
   name: string;
-  settings: Record<string, string>;
+  settings: OAuth2StrategyOptions;
 };
 const providers: Provider[] = [];
 
-// TODO: Parse providers from env. Do we want to change the providers list to a map for this?
+if (config.externalAuth.oauth2.authorizationURL) {
 providers.push({
   name: "oauth2",
   settings: {
-    authorizationURL: "https://www.example.com/oauth2/authorize",
-    tokenURL: "https://www.example.com/oauth2/token",
-    clientID: "5",
-    clientSecret: "5",
-    callbackURL: "http://localhost:3000/auth/example/callback",
+      authorizationURL: config.externalAuth.oauth2.authorizationURL,
+      tokenURL: config.externalAuth.oauth2.tokenURL,
+      clientID: config.externalAuth.oauth2.clientID,
+      clientSecret: config.externalAuth.oauth2.clientSecret,
   },
 });
+}
 
 // Register providers with passport.
+function registerProviders(): void {
 providers.forEach((provider) => {
   switch (provider.name) {
-    case "oauth2":
+      case "oauth2": {
+        const ssl = config.pad.useSSL === "false" ? "" : "s";
+        provider.settings.callbackURL = `http${ssl}://${config.pad.domain}${authUrlBase}${provider.name}/callback`;
       passport.use(
         provider.name,
-        new OAuth2Strategy(provider.settings as any, function (
+          new OAuth2Strategy(provider.settings, function (
           accessToken: string,
           refreshToken: string,
           profile: any,
@@ -45,11 +50,12 @@ providers.forEach((provider) => {
         })
       );
       break;
-
+      }
     default:
       console.error("Unsupported passport strategy:", provider.name);
   }
 });
+}
 
 function createOrFindUser(
   name: string,
@@ -58,7 +64,8 @@ function createOrFindUser(
   verified(new Error("Not implemented."));
 }
 
-export function installExternalAuth(app: express.Express): void {
+  registerProviders();
+
   // Setup passport routes.
   providers.forEach((provider) => {
     const url = authUrlBase + provider.name;
