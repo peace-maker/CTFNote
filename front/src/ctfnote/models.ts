@@ -95,12 +95,15 @@ export type SettingsColorMap = Record<SettingsColor, string>;
 export type Settings = {
   registrationAllowed: boolean;
   registrationPasswordAllowed: boolean;
+  registrationExternalAllowed: boolean;
+  loginExternalAllowed: boolean;
   style: SettingsColorMap;
 };
 
 export type AdminSettings = Settings & {
   registrationPassword: string;
   registrationDefaultRole: Role;
+  registrationExternalDefaultRole: Role;
 };
 
 export type User = {
@@ -109,5 +112,6 @@ export type User = {
   id: Id<User>;
   login: string;
   role: Role;
+  externalAuth: boolean;
   profile: Profile;
 };

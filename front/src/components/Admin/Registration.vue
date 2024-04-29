@@ -58,6 +58,32 @@
       </q-card>
     </div>
   </div>
+  <div class="row q-gutter-md">
+    <div class="col">
+      <q-card bordered>
+        <q-card-section>
+          <div class="text-h6">External Authentication</div>
+        </q-card-section>
+        <q-card-section>
+          <q-toggle
+            v-model="loginExternalAllowed"
+            left-label
+            label="Allow login on CTFNote using external authentication provider"
+          />
+          <q-toggle
+            v-model="registrationExternalAllowed"
+            left-label
+            label="Allow registration on CTFNote using external authentication provider"
+          />
+          <select-role
+            v-model="registrationExternalDefaultRole"
+            :disable="!registrationExternalAllowed"
+            label="Default role"
+          />
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -139,6 +165,61 @@ export default defineComponent({
 
         void this.resolveAndNotify(
           this.updateSettings({ registrationDefaultRole }),
+          opts
+        );
+      },
+    },
+    registrationExternalAllowed: {
+      get(): boolean {
+        return this.adminSettings.registrationExternalAllowed ?? true;
+      },
+      set(registrationExternalAllowed: boolean) {
+        const opts = {
+          message: registrationExternalAllowed
+            ? 'Registration using external authentication providers enabled'
+            : 'Registration using external authentication providers disabled',
+          icon: 'lock',
+        };
+
+        void this.resolveAndNotify(
+          this.updateSettings({ registrationExternalAllowed }),
+          opts
+        );
+      },
+    },
+    loginExternalAllowed: {
+      get(): boolean {
+        return this.adminSettings.loginExternalAllowed ?? true;
+      },
+      set(loginExternalAllowed: boolean) {
+        const opts = {
+          message: loginExternalAllowed
+            ? 'Login using external authentication providers enabled'
+            : 'Login using external authentication providers disabled',
+          icon: 'lock',
+        };
+
+        void this.resolveAndNotify(
+          this.updateSettings({ loginExternalAllowed }),
+          opts
+        );
+      },
+    },
+    registrationExternalDefaultRole: {
+      get(): Role {
+        return (
+          this.adminSettings.registrationExternalDefaultRole ?? Role.UserGuest
+        );
+      },
+      set(registrationExternalDefaultRole: Role) {
+        const roleName = registrationExternalDefaultRole.slice(5).toLowerCase();
+        const opts = {
+          message: `External default role set to ${roleName}!`,
+          icon: 'lock',
+        };
+
+        void this.resolveAndNotify(
+          this.updateSettings({ registrationExternalDefaultRole }),
           opts
         );
       },

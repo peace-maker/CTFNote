@@ -38,6 +38,30 @@
         <div v-else />
         <q-btn type="submit" label="Login" color="primary" />
       </q-card-actions>
+      <q-card-actions
+        v-if="loginExternalEnabled && authProviders.length > 0"
+        class="q-pa-md row justify-between"
+      >
+        <q-btn-dropdown
+          color="primary"
+          :loading="loadingAuthProviders"
+          label="External Auth"
+        >
+          <div>
+            <q-item
+              v-for="provider in authProviders"
+              :key="provider.name"
+              v-close-popup
+              clickable
+              @click="loginUsingExternalAuth(provider.name)"
+            >
+              <q-item-section>
+                <q-item-label>{{ provider.name }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </div>
+        </q-btn-dropdown>
+      </q-card-actions>
     </q-form>
   </q-card>
 </template>
@@ -54,15 +78,17 @@ export default defineComponent({
     token: { type: String, default: '' },
   },
   setup() {
+    const { result: authProviders, loading } = ctfnote.auth.getAuthProviders();
     return {
       settings: ctfnote.settings.injectSettings(),
       resolveAndNotify: ctfnote.ui.useNotify().resolveAndNotify,
       login: ctfnote.auth.useLogin(),
-      allowRegistration: true,
       form: reactive({
         login: '',
         password: '',
       }),
+      authProviders,
+      loadingAuthProviders: loading,
     };
   },
   computed: {
@@ -71,6 +97,9 @@ export default defineComponent({
         this.settings.registrationAllowed ||
         this.settings.registrationPasswordAllowed
       );
+    },
+    loginExternalEnabled() {
+      return this.settings.loginExternalAllowed;
     },
   },
   methods: {
@@ -83,6 +112,9 @@ export default defineComponent({
           icon: 'person',
         }
       );
+    },
+    loginUsingExternalAuth(provider: string) {
+      ctfnote.auth.doExternalAuth(provider);
     },
   },
 });

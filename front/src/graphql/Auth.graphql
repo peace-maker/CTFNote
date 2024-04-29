@@ -10,8 +10,21 @@ query newToken {
   newToken
 }
 
+query authProviders {
+  authProviders {
+    name
+    authUrl
+  }
+}
+
 mutation Login($login: String!, $password: String!) {
   login(input: { login: $login, password: $password }) {
+    jwt
+  }
+}
+
+mutation LoginExternal {
+  loginExternal(input: {}) {
     jwt
   }
 }
@@ -46,6 +59,12 @@ mutation RegisterWithPassword(
       ctfnotePassword: $ctfnotePassword
     }
   ) {
+    jwt
+  }
+}
+
+mutation RegisterExternal {
+  registerExternal(input: {}) {
     jwt
   }
 }

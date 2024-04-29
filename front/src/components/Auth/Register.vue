@@ -74,6 +74,31 @@
           :disable="!registrationAnyAllowed"
         />
       </q-card-actions>
+
+      <q-card-actions
+        v-if="registrationExternalAllowed && authProviders.length > 0"
+        class="q-pa-md row justify-between"
+      >
+        <q-btn-dropdown
+          color="primary"
+          :loading="loadingAuthProviders"
+          label="External Auth"
+        >
+          <div>
+            <q-item
+              v-for="provider in authProviders"
+              :key="provider.name"
+              v-close-popup
+              clickable
+              @click="registerUsingExternalAuth(provider.name)"
+            >
+              <q-item-section>
+                <q-item-label>{{ provider.name }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </div>
+        </q-btn-dropdown>
+      </q-card-actions>
     </q-form>
   </q-card>
 </template>
@@ -90,6 +115,7 @@ export default defineComponent({
     token: { type: String, default: '' },
   },
   setup() {
+    const { result: authProviders, loading } = ctfnote.auth.getAuthProviders();
     return {
       resolveAndNotify: ctfnote.ui.useNotify().resolveAndNotify,
       register: ctfnote.auth.useRegister(),
@@ -102,6 +128,8 @@ export default defineComponent({
         ctfnotePassword: '',
       }),
       usePassword: ref(false),
+      authProviders,
+      loadingAuthProviders: loading,
     };
   },
   computed: {
@@ -110,6 +138,9 @@ export default defineComponent({
     },
     registrationPasswordAllowed(): boolean {
       return this.settings?.registrationPasswordAllowed ?? false;
+    },
+    registrationExternalAllowed(): boolean {
+      return this.settings?.registrationExternalAllowed ?? false;
     },
     registrationAnyAllowed() {
       return this.registrationAllowed || this.registrationPasswordAllowed;
@@ -143,6 +174,9 @@ export default defineComponent({
       }
 
       void this.resolveAndNotify(registerPromise, opts);
+    },
+    registerUsingExternalAuth(provider: string) {
+      ctfnote.auth.doExternalAuth(provider);
     },
   },
 });

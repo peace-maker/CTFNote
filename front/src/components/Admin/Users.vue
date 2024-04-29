@@ -41,6 +41,11 @@
             {{ value }}
           </q-td>
         </template>
+        <template #body-cell-externalAuth="{ value }">
+          <q-td class="text-right" auto-width>
+            {{ value }}
+          </q-td>
+        </template>
         <template #body-cell-role="{ row, value }">
           <q-td>
             <select-role
@@ -68,6 +73,7 @@
                 size="sm"
                 round
                 icon="lock_clock"
+                :disable="row.externalAuth"
                 @click="resetPassword(row)"
               >
                 <q-tooltip>Generate a password reset link</q-tooltip>
@@ -108,6 +114,12 @@ const columns = [
     sortable: true,
   },
   { name: 'role', label: 'Role', field: 'role', sortable: true },
+  {
+    name: 'externalAuth',
+    label: 'External',
+    field: 'externalAuth',
+    sortable: true,
+  },
   { name: 'btns' },
 ];
 

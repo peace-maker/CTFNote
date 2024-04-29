@@ -5,6 +5,7 @@ fragment UserFragment on User {
   login
   role
   id
+  externalAuth
   profile {
     ...ProfileFragment
   }

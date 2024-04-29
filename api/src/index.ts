@@ -11,10 +11,15 @@ import {
 import { migrate, MigrateDBConfig } from "postgres-migrations";
 import config from "./config";
 import createTasKPlugin from "./plugins/createTask";
+import {
+  externalAuthProviderPlugin,
+  installExternalAuth,
+} from "./plugins/externalAuthProvider";
 import importCtfPlugin from "./plugins/importCtf";
 import uploadLogoPlugin from "./plugins/uploadLogo";
 import uploadScalar from "./plugins/uploadScalar";
 import ConnectionFilterPlugin from "postgraphile-plugin-connection-filter";
+import jwt from "jsonwebtoken";
 
 function getDbUrl(role: "user" | "admin") {
   const login = config.db[role].login;
@@ -36,7 +41,6 @@ function createOptions() {
     ignoreIndexes: false,
     subscriptionAuthorizationFunction: "ctfnote_private.validate_subscription",
     jwtPgTypeIdentifier: "ctfnote.jwt",
-    pgDefaultRole: "user_anonymous",
     jwtSecret: secret,
     appendPlugins: [
       simplifyPlugin,
@@ -45,10 +49,42 @@ function createOptions() {
       uploadLogoPlugin,
       createTasKPlugin,
       ConnectionFilterPlugin,
+      externalAuthProviderPlugin,
     ],
     ownerConnectionString: getDbUrl("admin"),
     enableQueryBatching: true,
     legacyRelations: "omit" as const,
+    pgSettings: async (req) => {
+      let role = "user_anonymous";
+
+      try {
+        if (
+          req.headers.authorization != null &&
+          req.headers.authorization.startsWith("Bearer ")
+        ) {
+          const jwtStr = req.headers.authorization.substring(7);
+          let claims = jwt.verify(
+            jwtStr,
+            config.env == "development" ? "DEV" : secret
+          );
+
+          if (claims instanceof String) {
+            throw Error("Invalid token format.");
+          }
+
+          claims = claims as jwt.JwtPayload;
+          if (claims.role === undefined) {
+            throw Error("Role is missing.");
+          }
+
+          role = claims.role;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      return { role: role };
+    },
   };
 
   if (config.env == "development") {
@@ -86,6 +122,7 @@ function createApp(postgraphileOptions: PostGraphileOptions) {
     })
   );
   app.use(postgraphile(getDbUrl("user"), "ctfnote", postgraphileOptions));
+  installExternalAuth(app);
   return app;
 }
 

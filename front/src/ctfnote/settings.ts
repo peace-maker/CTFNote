@@ -38,6 +38,8 @@ export function buildSettings(
   return {
     registrationAllowed: fragment.registrationAllowed ?? false,
     registrationPasswordAllowed: fragment.registrationPasswordAllowed ?? false,
+    registrationExternalAllowed: fragment.registrationExternalAllowed ?? false,
+    loginExternalAllowed: fragment.loginExternalAllowed ?? false,
     style: parseStyle(fragment.style ?? '{}'),
   };
 }
@@ -49,6 +51,7 @@ export function buildAdminSettings(
     ...buildSettings(fragment),
     registrationPassword: fragment.registrationPassword ?? '',
     registrationDefaultRole: fragment.registrationDefaultRole ?? Role.UserGuest,
+    registrationExternalDefaultRole: fragment.registrationExternalDefaultRole ?? Role.UserGuest,
     style: parseStyle(fragment.style ?? '{}'),
   };
 }

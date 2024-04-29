@@ -2,6 +2,8 @@ fragment SettingsInfo on Setting {
   nodeId
   registrationAllowed
   registrationPasswordAllowed
+  registrationExternalAllowed
+  loginExternalAllowed
   style
 }
 
@@ -10,6 +12,7 @@ fragment AdminSettingsInfo on Setting {
   ...SettingsInfo
   registrationPassword
   registrationDefaultRole
+  registrationExternalDefaultRole
 }
 
 query getSettings {

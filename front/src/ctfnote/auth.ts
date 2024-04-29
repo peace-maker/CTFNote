@@ -5,10 +5,12 @@ import {
   useRegisterMutation,
   useRegisterWithPasswordMutation,
   useRegisterWithTokenMutation,
-  useResetPasswordMutation
+  useResetPasswordMutation,
+  useAuthProvidersQuery,
 } from 'src/generated/graphql';
 import { useRouter } from 'vue-router';
 import { prefetchMe } from './me';
+import { wrapQuery } from './utils';
 
 
 export const JWT_KEY = 'JWT';
@@ -19,6 +21,10 @@ export function saveJWT(jwt: string | null | undefined) {
   } else {
     localStorage.setItem(JWT_KEY, jwt);
   }
+}
+
+export function doExternalAuth(provider: string) {
+  window.open(`/auth/${provider}`, '_self');
 }
 
 /* Prefetch */
@@ -38,6 +44,12 @@ export async function refreshJWT(): Promise<boolean> {
   } else {
     return false;
   }
+}
+
+/* Queries */
+export function getAuthProviders() {
+  const q = useAuthProvidersQuery({});
+  return wrapQuery(q, [], (data) => data.authProviders);
 }
 
 /* Mutations */
