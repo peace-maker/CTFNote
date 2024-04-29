@@ -97,6 +97,9 @@ module.exports = configure(function (ctx) {
           },
           ws: true,
         },
+        '/auth': {
+          target: 'http://127.0.0.1:3000',
+        },
       },
     },
 
